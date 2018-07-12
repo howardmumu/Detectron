@@ -89,6 +89,13 @@ def parse_args():
     parser.add_argument(
         '--num', dest='num', help='process num images', default=-1, type=int
     )
+    parser.add_argument(
+        '--output-ext',
+        dest='output_ext',
+        help='output image file format (default: pdf)',
+        default='pdf',
+        type=str
+    )
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -121,7 +128,7 @@ def main(args):
         if i >= args.num >= 0:
             break
         out_name = os.path.join(
-            args.output_dir, '{}'.format(os.path.basename(im_name) + '.pdf')
+            args.output_dir, '{}'.format(os.path.basename(im_name) + '.' + args.output_ext)
         )
         logger.info('Processing {} -> {}'.format(im_name, out_name))
         im = cv2.imread(im_name)
