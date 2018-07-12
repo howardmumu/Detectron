@@ -45,3 +45,27 @@ def get_coco_dataset():
     ]
     ds.classes = {i: name for i, name in enumerate(classes)}
     return ds
+
+
+def get_trash_dataset():
+    """A dummy Trash dataset that includes only the 'classes' field."""
+    ds = AttrDict()
+    classes = [
+        '__background__', u'sld', u'pz', u'zzsgx', u'slsgx', u'pmsgx', u'stt',
+        u'ylg', u'pmkch', u'bzl', u'ylx', u'ml', u'cj', u'mqg', u'bzd', u'kqst'
+    ]
+    ds.classes = {i: name for i, name in enumerate(classes)}
+    return ds
+
+
+def get_general_dataset():
+    """A dummy Trash dataset that includes only the 'classes' field."""
+    ds = AttrDict()
+    classes = [
+        '__background__', u'sld', u'pz', u'stt', u'xz', u'mqg', u'zz', u'yc', u'yz', u'ml',
+        u'cj', u'gz', u'tys', u'lp', u'bzl', u'c', u'bzd', u'slc', u'ys', u'tf'
+    ]
+    ds.classes = {i: name for i, name in enumerate(classes)}
+    return ds
+
+

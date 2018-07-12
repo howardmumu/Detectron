@@ -59,14 +59,14 @@ def parse_args():
         '--cfg',
         dest='cfg',
         help='cfg model file (/path/to/model_config.yaml)',
-        default=None,
+        default='/home/shuhao/Documents/train_configs/e2e_faster_rcnn_R-101-FPN_2x.yaml',
         type=str
     )
     parser.add_argument(
         '--wts',
         dest='weights',
         help='weights model file (/path/to/model_weights.pkl)',
-        default=None,
+        default='/media/shuhao/harddisk1/model/trash_frcnn_res50_001/model_final.pkl',
         type=str
     )
     parser.add_argument(
@@ -84,7 +84,10 @@ def parse_args():
         type=str
     )
     parser.add_argument(
-        'im_or_folder', help='image or folder of images', default=None
+        'im_or_folder', help='image or folder of images', default='~/Pictures/trash_test/'
+    )
+    parser.add_argument(
+        '--num', dest='num', help='process num images', default=-1, type=int
     )
     if len(sys.argv) == 1:
         parser.print_help()
@@ -96,7 +99,7 @@ def main(args):
     logger = logging.getLogger(__name__)
 
     merge_cfg_from_file(args.cfg)
-    cfg.NUM_GPUS = 1
+    cfg.NUM_GPUS = 0
     args.weights = cache_url(args.weights, cfg.DOWNLOAD_CACHE)
     assert_and_infer_cfg(cache_urls=False)
 
@@ -106,7 +109,8 @@ def main(args):
         'Models that require precomputed proposals are not supported'
 
     model = infer_engine.initialize_model_from_cfg(args.weights)
-    dummy_coco_dataset = dummy_datasets.get_coco_dataset()
+    # dummy_coco_dataset = dummy_datasets.get_trash_dataset()
+    dummy_coco_dataset = dummy_datasets.get_general_dataset()
 
     if os.path.isdir(args.im_or_folder):
         im_list = glob.iglob(args.im_or_folder + '/*.' + args.image_ext)
@@ -114,6 +118,8 @@ def main(args):
         im_list = [args.im_or_folder]
 
     for i, im_name in enumerate(im_list):
+        if i >= args.num >= 0:
+            break
         out_name = os.path.join(
             args.output_dir, '{}'.format(os.path.basename(im_name) + '.pdf')
         )
@@ -144,7 +150,7 @@ def main(args):
             dataset=dummy_coco_dataset,
             box_alpha=0.3,
             show_class=True,
-            thresh=0.7,
+            thresh=0.5,
             kp_thresh=2
         )
 

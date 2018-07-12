@@ -31,6 +31,7 @@ from __future__ import unicode_literals
 import cv2
 import logging
 import numpy as np
+import random
 
 from detectron.core.config import cfg
 import detectron.roi_data.fast_rcnn as fast_rcnn_roi_data
@@ -99,6 +100,8 @@ def _get_image_blob(roidb):
     im_scales = []
     for i in range(num_images):
         im = cv2.imread(roidb[i]['image'])
+        if (random.random() > 0.5):
+            im = temp_data_augmentation(im)
         assert im is not None, \
             'Failed to read image \'{}\''.format(roidb[i]['image'])
         if roidb[i]['flipped']:
@@ -114,3 +117,50 @@ def _get_image_blob(roidb):
     blob = blob_utils.im_list_to_blob(processed_ims)
 
     return blob, im_scales
+
+
+def temp_data_augmentation(im):
+    from data_tools.imgaug.imgaug import augmenters as iaa
+    images = np.array([im])
+    seq = iaa.Sequential(
+        [
+            iaa.SomeOf((0, 5),
+                       [
+                           # sometimes(iaa.Superpixels(p_replace=(0, 1.0), n_segments=(20, 200))), # convert images into their superpixel representation
+                           iaa.OneOf([
+                               iaa.GaussianBlur((0, 1.0)),  # blur images with a sigma between 0 and 3.0
+                               iaa.AverageBlur(k=(2, 3)),
+                               # blur image using local means with kernel sizes between 2 and 7
+                               # iaa.MedianBlur(k=(3, 11)), # blur image using local medians with kernel sizes between 2 and 7
+                           ]),
+                           iaa.AdditiveGaussianNoise(loc=0, scale=(0.0, 0.05 * 255), per_channel=0.5),
+                           # add gaussian noise to images
+                           iaa.OneOf([
+                               iaa.Dropout((0.01, 0.1), per_channel=0.5),  # randomly remove up to 10% of the pixels
+                               iaa.CoarseDropout((0.03, 0.15), size_percent=(0.02, 0.05), per_channel=0.2),
+                           ]),
+                           # iaa.Invert(0.05, per_channel=True), # invert color channels
+                           iaa.Add((-45, 45), per_channel=0.5),
+                           # change brightness of images (by -10 to 10 of original value)
+                           iaa.AddToHueAndSaturation((-20, 20)),  # change hue and saturation
+                           # either change the brightness of the whole image (sometimes
+                           # per channel) or change the brightness of subareas
+                           iaa.OneOf([
+                               iaa.Multiply((0.5, 1.5), per_channel=0.5),
+                               iaa.FrequencyNoiseAlpha(
+                                   exponent=(-4, 0),
+                                   first=iaa.Multiply((0.5, 1.5), per_channel=True),
+                                   second=iaa.ContrastNormalization((0.5, 2.0))
+                               )
+                           ]),
+                           iaa.ContrastNormalization((0.5, 2.0), per_channel=0.5),  # improve or worsen the contrast
+                           iaa.Grayscale(alpha=(0.0, 1.0)),
+                       ],
+                       random_order=True
+                       )
+        ],
+        random_order=True
+    )
+
+    images_aug = seq.augment_images(images)
+    return images_aug[0]

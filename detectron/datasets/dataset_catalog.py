@@ -24,7 +24,8 @@ import os
 
 
 # Path to data dir
-_DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+# _DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+_DATA_DIR = '/media/shuhao/harddisk1/data'
 
 # Required dataset entry keys
 _IM_DIR = 'image_directory'
@@ -201,6 +202,36 @@ _DATASETS = {
             _DATA_DIR + '/VOC2012/annotations/voc_2012_val.json',
         _DEVKIT_DIR:
             _DATA_DIR + '/VOC2012/VOCdevkit2012'
+    },
+    'trash_train': {
+        _IM_DIR:
+            _DATA_DIR + '/images/trash',
+        _ANN_FN:
+            _DATA_DIR + '/annotations/trash/trash_train_172589.json',
+    },
+    'trash_val': {
+        _IM_DIR:
+            _DATA_DIR + '/images/trash',
+        _ANN_FN:
+            _DATA_DIR + '/annotations/trash/trash_val.json',
+    },
+    'general_train': {
+        _IM_DIR:
+            _DATA_DIR + '/images/general',
+        _ANN_FN:
+            _DATA_DIR + '/annotations/general/78-19clasess.json',
+    },
+    'advertise_train': {
+        _IM_DIR:
+            _DATA_DIR + '/images/advertise',
+        _ANN_FN:
+            _DATA_DIR + '/annotations/advertise/advertise_train_31888.json',
+    },
+    'advertise_val': {
+        _IM_DIR:
+            _DATA_DIR + '/images/advertise',
+        _ANN_FN:
+            _DATA_DIR + '/annotations/advertise/advertise_test_3249.json',
     }
 }
 

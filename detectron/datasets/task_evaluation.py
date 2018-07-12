@@ -93,6 +93,11 @@ def evaluate_boxes(dataset, all_boxes, output_dir, use_matlab=False):
             dataset, all_boxes, output_dir, use_matlab=use_matlab
         )
         box_results = _voc_eval_to_box_results(voc_eval)
+    elif _use_my_own_dataset(dataset):
+        coco_eval = json_dataset_evaluator.evaluate_boxes(
+            dataset, all_boxes, output_dir, use_salt=not_comp, cleanup=not_comp
+        )
+        box_results = _coco_eval_to_box_results(coco_eval)
     else:
         raise NotImplementedError(
             'No evaluator for dataset: {}'.format(dataset.name)
@@ -252,6 +257,10 @@ def _use_cityscapes_evaluator(dataset):
     """Check if the dataset uses the Cityscapes dataset evaluator."""
     return dataset.name.find('cityscapes_') > -1
 
+def _use_my_own_dataset(dataset):
+    """Check if the dataset uses the Cityscapes dataset evaluator."""
+    """Add dataset names behind, e.g. trash..."""
+    return dataset.name.find('advertise') > -1
 
 def _use_voc_evaluator(dataset):
     """Check if the dataset uses the PASCAL VOC dataset evaluator."""

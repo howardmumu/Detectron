@@ -298,7 +298,7 @@ def vis_one_image(
                           bbox[2] - bbox[0],
                           bbox[3] - bbox[1],
                           fill=False, edgecolor='g',
-                          linewidth=0.5, alpha=box_alpha))
+                          linewidth=1.0, alpha=box_alpha))
 
         if show_class:
             ax.text(

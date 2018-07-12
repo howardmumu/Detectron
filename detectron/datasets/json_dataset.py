@@ -444,6 +444,7 @@ def _add_class_assignments(roidb):
         # if max overlap > 0, the class must be a fg class (not class 0)
         nonzero_inds = np.where(max_overlaps > 0)[0]
         assert all(max_classes[nonzero_inds] != 0)
+        assert all(max_classes[nonzero_inds] != 0)
 
 
 def _sort_proposals(proposals, id_field):
