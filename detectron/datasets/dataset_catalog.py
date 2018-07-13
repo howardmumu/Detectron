@@ -25,7 +25,8 @@ import os
 
 # Path to data dir
 # _DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-_DATA_DIR = '/media/shuhao/harddisk1/data'
+# _DATA_DIR = '/media/shuhao/harddisk1/data'
+_DATA_DIR = '/media/shuhao/BE4059084058C8B3/trash-outside-triandata'
 
 # Required dataset entry keys
 _IM_DIR = 'image_directory'
@@ -217,9 +218,9 @@ _DATASETS = {
     },
     'general_train': {
         _IM_DIR:
-            _DATA_DIR + '/images/general',
+            _DATA_DIR + '/changedimg/changedimg',
         _ANN_FN:
-            _DATA_DIR + '/annotations/general/78-19clasess.json',
+            _DATA_DIR + '/instances577501.json',
     },
     'advertise_train': {
         _IM_DIR:

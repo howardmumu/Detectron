@@ -49,9 +49,11 @@ c2_utils.import_detectron_ops()
 # thread safe and causes unwanted GPU memory allocations.
 cv2.ocl.setUseOpenCL(False)
 
-cfg_file = '/home/shuhao/Documents/train_configs/trash_4gpu_e2e_faster_rcnn_R-50-FPN.yaml'
-model_file = '/media/shuhao/harddisk1/model/trash_frcnn_res50_001/model_final.pkl'
-image_file_or_folder = '/home/shuhao/Pictures/test/6289.jpg'
+cfg_file = '/home/shuhao/Documents/train_configs/e2e_faster_rcnn_R-101-FPN_2x.yaml'
+model_file = '/media/shuhao/harddisk1/model/general_frcnn_res101_001/train/general_train/generalized_rcnn/model_final.pkl'
+# image files
+image_file_or_folder = r'/home/shuhao/Pictures/youshang_val/pic/tanfan'
+output_dir = '/home/shuhao/Pictures/youshang_val/pic/tanfan/output'
 
 workspace.GlobalInit(['caffe2', '--caffe2_log_level=3'])
 
@@ -61,7 +63,7 @@ weights = cache_url(model_file, cfg.DOWNLOAD_CACHE)
 assert_and_infer_cfg(cache_urls=False)
 
 model = infer_engine.initialize_model_from_cfg(weights)
-dummy_coco_dataset = dummy_datasets.get_trash_dataset()
+dummy_coco_dataset = dummy_datasets.get_general_dataset()
 
 
 def vis_one_image_opencv(
@@ -69,7 +71,6 @@ def vis_one_image_opencv(
         show_box=False, dataset=None, show_class=False):
     """Constructs a numpy array with the detections visualized."""
     boxes = np.array(boxes)
-    print(boxes)
     if boxes is None or boxes.shape[0] == 0 or max(boxes[:, 4]) < thresh:
         return None
 
@@ -86,7 +87,7 @@ def vis_one_image_opencv(
         # show box (off by default)
         if show_box:
             im = vis_utils.vis_bbox(
-                im, (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]))
+                im, (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]), thick=2)
 
         # show class (off by default)
         if show_class:
@@ -140,7 +141,7 @@ def detect_image(img):
         classes = None
 
     if boxes is None:
-        return img
+        return None
     ret = vis_one_image_opencv(
         im,  # BGR -> RGB for visualization
         boxes,
@@ -150,19 +151,35 @@ def detect_image(img):
         show_class=True,
         thresh=0.7,
     )
-    if ret is None:
-        return img
-    else:
-        return ret
+    # if ret is None:
+    #     return img
+    # else:
+    return ret
 
 
 if __name__ == '__main__':
-    vidcap = cv2.VideoCapture(0)
-    while 1:
-        success, image = vidcap.read()
-        # Display the resulting frame
-        cv2.imshow('frame', detect_image(image))
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    # vidcap = cv2.VideoCapture(0)
+    # while 1:
+    #     success, image = vidcap.read()
+    #     # Display the resulting frame
+    #     cv2.imshow('frame', detect_image(image))
+    #     if cv2.waitKey(1) & 0xFF == ord('q'):
+    #         break
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    if os.path.isdir(image_file_or_folder):
+        im_list = glob.iglob(image_file_or_folder + '/*.jpg')
+    else:
+        im_list = [image_file_or_folder]
+    for i, im_name in enumerate(im_list):
+        im = cv2.imread(im_name)
+        if im is None:
+            continue
+        im = detect_image(im)
+        if im is None:
+            continue
+        file_name = os.path.basename(im_name)
+        cv2.imwrite(os.path.join(output_dir, file_name), im)
 
 

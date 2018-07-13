@@ -1,3 +1,4 @@
+# coding=utf-8
 #!/usr/bin/env python2
 
 # Copyright (c) 2017-present, Facebook, Inc.
@@ -50,12 +51,14 @@ c2_utils.import_detectron_ops()
 cv2.ocl.setUseOpenCL(False)
 
 # model files
-cfg_file = '/home/shuhao/Documents/train_configs/e2e_faster_rcnn_R-101-FPN_2x.yaml'
-model_file = '/media/shuhao/harddisk1/model/general_frcnn_res101_001/train/general_train/generalized_rcnn/model_iter144999.pkl'
+# cfg_file = '/home/shuhao/Documents/train_configs/e2e_faster_rcnn_R-101-FPN_2x.yaml'
+cfg_file = '/home/shuhao/Documents/train_configs/trash_e2e_faster_rcnn_R-101-FPN.yaml'
+# model_file = '/media/shuhao/harddisk1/model/general_frcnn_res101_001/train/general_train/generalized_rcnn/model_final.pkl'
+model_file = '/media/shuhao/harddisk1/model/trash_frcnn_res101_001/train/trash_train/generalized_rcnn/model_iter174999.pkl'
 
 # image files
-image_file_or_folder = '/media/shuhao/harddisk1/data/images/xiaohe_test'
-output_dir = '/media/shuhao/harddisk1/data/images/xiaohe_test_output'
+image_file_or_folder = r'/media/shuhao/harddisk1/data/images/evalimg_mini'
+output_dir = '/media/shuhao/harddisk1/data/images/eval_output_trash_101_mini'
 
 workspace.GlobalInit(['caffe2', '--caffe2_log_level=3'])
 
@@ -66,7 +69,7 @@ assert_and_infer_cfg(cache_urls=False)
 t = time.time()
 model = infer_engine.initialize_model_from_cfg(weights)
 print('load model took {} seconds'.format(time.time() - t))
-dummy_coco_dataset = dummy_datasets.get_general_dataset()
+dummy_coco_dataset = dummy_datasets.get_trash_dataset()
 
 
 def generate_crops(im, crop_num):
