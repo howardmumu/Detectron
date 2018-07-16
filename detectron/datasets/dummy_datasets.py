@@ -68,4 +68,12 @@ def get_general_dataset():
     ds.classes = {i: name for i, name in enumerate(classes)}
     return ds
 
+def get_new_general_dataset():
+    """A dummy Trash dataset that includes only the 'classes' field."""
+    ds = AttrDict()
+    classes = ['__background__', u'sld', u'pz', u'stt', u'xz', u'mqg', u'zz', u'yc', u'yz', u'ml', u'cj',
+               u'tys', u'lp', u'bzl', u'bzd', u'slc', u'ys']
+    ds.classes = {i: name for i, name in enumerate(classes)}
+    return ds
+
 

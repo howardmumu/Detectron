@@ -51,14 +51,12 @@ c2_utils.import_detectron_ops()
 cv2.ocl.setUseOpenCL(False)
 
 # model files
-# cfg_file = '/home/shuhao/Documents/train_configs/e2e_faster_rcnn_R-101-FPN_2x.yaml'
-cfg_file = '/home/shuhao/Documents/train_configs/trash_e2e_faster_rcnn_R-101-FPN.yaml'
-# model_file = '/media/shuhao/harddisk1/model/general_frcnn_res101_001/train/general_train/generalized_rcnn/model_final.pkl'
-model_file = '/media/shuhao/harddisk1/model/trash_frcnn_res101_001/train/trash_train/generalized_rcnn/model_iter174999.pkl'
+cfg_file = '/home/shuhao/Documents/train_configs/general_e2e_faster_rcnn_R-101-FPN_002.yaml'
+model_file = '/media/shuhao/harddisk1/model/general_frcnn_res101_002/train/general_train/generalized_rcnn/model_final.pkl'
 
 # image files
-image_file_or_folder = r'/media/shuhao/harddisk1/data/images/evalimg_mini'
-output_dir = '/media/shuhao/harddisk1/data/images/eval_output_trash_101_mini'
+image_file_or_folder = r'/media/shuhao/harddisk1/data/images/xiaohe_test'
+output_dir = '/media/shuhao/harddisk1/data/images/xiaohe_test_output'
 
 workspace.GlobalInit(['caffe2', '--caffe2_log_level=3'])
 
@@ -69,7 +67,7 @@ assert_and_infer_cfg(cache_urls=False)
 t = time.time()
 model = infer_engine.initialize_model_from_cfg(weights)
 print('load model took {} seconds'.format(time.time() - t))
-dummy_coco_dataset = dummy_datasets.get_trash_dataset()
+dummy_coco_dataset = dummy_datasets.get_new_general_dataset()
 
 
 def generate_crops(im, crop_num):
@@ -131,7 +129,7 @@ def vis_one_image_opencv(
 
 def detect(im_name):
     im = cv2.imread(im_name)
-    im_list = generate_crops(im, (2, 3))
+    im_list = generate_crops(im, (2, 2))
     timers = defaultdict(Timer)
     final_boxes = []
     final_classes = []
@@ -168,7 +166,7 @@ def detect(im_name):
         dataset=dummy_coco_dataset,
         show_box=True,
         show_class=True,
-        thresh=0.7,
+        thresh=0.4,
     )
     return result_im
 
